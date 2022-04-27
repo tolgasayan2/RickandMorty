@@ -8,6 +8,7 @@
 import UIKit
 import AlamofireImage
 import SnapKit
+import Apollo
 
 class RickandMortyTableViewCell: UITableViewCell {
   
@@ -88,9 +89,9 @@ class RickandMortyTableViewCell: UITableViewCell {
     }
   }
   
-  func saveModel(model: Result) {
-    nameLbl.text = "Name: \(model.name ?? "")"
-    locationLbl.text = "Location: \(model.location?.name ?? "")"
-    customImage.af.setImage(withURL: URL(string: model.image ?? "https://picsum.photos/200/300") ?? URL(string: "https://picsum.photos/200/300")!)
+  func saveModel(model: SpesificCharacterQuery.Data.Character.Result?) {
+    nameLbl.text = "Name: \(model?.name ?? "")"
+    locationLbl.text = "Location: \(model?.location?.name ?? "")"
+    customImage.af.setImage(withURL: URL(string: model?.image! ?? "https://picsum.photos/200/300") ?? URL(string: "https://picsum.photos/200/300")!)
   }
 }

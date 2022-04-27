@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Apollo
 
 protocol IRickandMortyViewModel {
-  var rickAndMortyCharacters : [Result] {get set}
+  var rickAndMortyCharacters : [SpesificCharacterQuery.Data.Character.Result?] {get set}
   var rickAndMortyService: IRickandMortyService {get}
   var rickAndMortyOutput : RickandMortyOutput? {get}
   
@@ -25,7 +26,7 @@ final class RickAndMortyViewModel: IRickandMortyViewModel {
   var rickAndMortyOutput: RickandMortyOutput?
   
   
-  var rickAndMortyCharacters: [Result] = []
+  var rickAndMortyCharacters: [SpesificCharacterQuery.Data.Character.Result?] = []
   var rickAndMortyService: IRickandMortyService
   private var isLoading = false
   init() {
@@ -37,7 +38,7 @@ final class RickAndMortyViewModel: IRickandMortyViewModel {
     rickAndMortyService.fetchAllDatas(pagination: true) { [weak self] response in
       DispatchQueue.main.async {
         self?.changeLoading()
-        self?.rickAndMortyCharacters = response ?? []
+        self?.rickAndMortyCharacters = response
         self?.rickAndMortyOutput?.saveData(values: self?.rickAndMortyCharacters ?? [])
       }
      

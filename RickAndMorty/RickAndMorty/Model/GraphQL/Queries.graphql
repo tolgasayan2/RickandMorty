@@ -1,0 +1,16 @@
+
+
+query SpesificCharacter {
+  characters {
+  results{
+    name
+     location {
+    name
+    dimension
+  }
+    image
+  }
+  
+}
+
+}

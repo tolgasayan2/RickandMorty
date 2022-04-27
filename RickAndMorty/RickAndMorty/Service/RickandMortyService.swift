@@ -6,44 +6,33 @@
 //
 
 import Foundation
-import Alamofire
+import Apollo
 
-enum RickandMortyServiceEndPoint: String {
-  case BASE_URL = "https://rickandmortyapi.com/api"
-  case PATH = "/character"
-  
-  static func characterPath() -> String {
-    return "\(BASE_URL.rawValue)\(PATH.rawValue)"
-  }
-}
+
 
 protocol IRickandMortyService {
   var isPaginating: Bool {get
     
   }
-  func fetchAllDatas(pagination: Bool, response: @escaping ([Result]?) -> ())
+  func fetchAllDatas(pagination: Bool, response: @escaping ([SpesificCharacterQuery.Data.Character.Result?]) -> ())
 }
 
 class RickandMortyService: IRickandMortyService {
+  
   var isPaginating = false
-  func fetchAllDatas(pagination: Bool = false,response: @escaping ([Result]?) -> ()) {
-    
+  func fetchAllDatas(pagination: Bool = false,response: @escaping ([SpesificCharacterQuery.Data.Character.Result?]) -> ()) {
     if pagination {
       isPaginating = true
     }
-    AF.request(RickandMortyServiceEndPoint.characterPath()).responseDecodable(of: RickandMorty.self) { model in
-      guard let data = model.value
-      else {
-       response(nil)
-        return
+    Network.shared.apollo.fetch(query: SpesificCharacterQuery()) { result in
+      switch result {
+      case .success(let model):
+        response((model.data?.characters?.results)!)
+        print(model.data?.characters?.results?.count)
+      case .failure(let error):
+        print("Error: \(error)")
       }
-      if pagination {
-        self.isPaginating = false
-      }
-      response(data.results)
-      print(data.results)
     }
-      
     }
   }
   

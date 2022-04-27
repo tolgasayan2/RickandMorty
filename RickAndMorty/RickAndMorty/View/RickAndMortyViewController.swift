@@ -10,7 +10,7 @@ import SnapKit
 
 protocol RickandMortyOutput {
   func changeLoading(isLoad: Bool)
-  func saveData(values: [Result])
+  func saveData(values: [SpesificCharacterQuery.Data.Character.Result?])
 }
 
 final class RickAndMortyViewController: UIViewController {
@@ -18,7 +18,7 @@ final class RickAndMortyViewController: UIViewController {
   private let tableView: UITableView = UITableView()
   private let indicator: UIActivityIndicatorView = UIActivityIndicatorView()
   private let filterButton: UIButton = UIButton()
-  var results: [Result] = []
+  var results: [SpesificCharacterQuery.Data.Character.Result?] = []
   lazy var viewModel = RickAndMortyViewModel()
   
     override func viewDidLoad() {
@@ -70,7 +70,7 @@ extension RickAndMortyViewController: RickandMortyOutput {
     
   }
   
-  func saveData(values: [Result]) {
+  func saveData(values: [SpesificCharacterQuery.Data.Character.Result?]) {
     results = values
     tableView.reloadData()
   }
@@ -98,15 +98,9 @@ extension RickAndMortyViewController: UITableViewDelegate, UITableViewDataSource
       guard !viewModel.rickAndMortyService.isPaginating else {
         return
       }
-      viewModel.rickAndMortyService.fetchAllDatas(pagination: true) { [weak self] response in
-        switch response {
-        case .some(let moreData):
-          self?.viewModel.rickAndMortyCharacters.append(contentsOf: moreData)
-          self?.viewModel.rickAndMortyOutput?.saveData(values: self?.viewModel.rickAndMortyCharacters ?? [])
-          
-        case .none:
-          break
-        }
+      viewModel.rickAndMortyService.fetchAllDatas(pagination: true) { [weak self] result in
+        self?.viewModel.rickAndMortyCharacters.append(contentsOf: result)
+        self?.viewModel.rickAndMortyOutput?.saveData(values: self?.viewModel.rickAndMortyCharacters ?? [])
       }
     }
   }

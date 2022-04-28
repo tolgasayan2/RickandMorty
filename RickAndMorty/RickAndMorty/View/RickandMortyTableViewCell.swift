@@ -43,14 +43,9 @@ class RickandMortyTableViewCell: UITableViewCell {
     nameLbl.font = .systemFont(ofSize: 15)
     locationLbl.font = .systemFont(ofSize: 15)
     locationLbl.numberOfLines = 0
-    viewBox.backgroundColor = .white
-    viewBox.layer.shadowColor = UIColor.gray.cgColor
-    viewBox.layer.shouldRasterize = true
-    viewBox.layer.shadowOffset = .zero
-    viewBox.layer.shadowOpacity = 1
-    viewBox.layer.shadowRadius = 10
-    viewBox.layer.cornerRadius = 20
-    customImage.layer.cornerRadius = 20
+    viewBox.backgroundColor = .clear
+    viewBox.dropShadow()
+    customImage.layer.cornerRadius = 10
     customImage.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
     customImage.clipsToBounds = true
     viewBox.clipsToBounds = true
@@ -63,15 +58,18 @@ class RickandMortyTableViewCell: UITableViewCell {
       make.right.equalToSuperview().offset(-30)
       make.left.equalToSuperview().offset(30)
       make.bottom.equalToSuperview().offset(-20)
-      make.size.equalTo(250)
+      make.width.equalTo(327)
+      make.height.equalTo(265)
       
     }
   
     customImage.snp.makeConstraints { make in
       make.top.equalTo(viewBox.snp.top)
-      make.right.equalTo(viewBox.snp.right)
-      make.left.equalTo(viewBox.snp.left)
+      make.right.equalTo(viewBox.snp.right).offset(-2)
+      make.left.equalTo(viewBox.snp.left).offset(2)
       make.bottom.equalTo(viewBox.snp.bottom).offset(-75)
+      make.width.equalTo(327)
+      make.height.equalTo(168)
     }
 
     nameLbl.snp.makeConstraints { make in

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SwiftEntryKit
 
 protocol RickandMortyOutput {
   func changeLoading(isLoad: Bool)
@@ -20,6 +21,7 @@ final class RickAndMortyViewController: UIViewController {
   private let filterButton: UIButton = UIButton()
   var results: [SpesificCharacterQuery.Data.Character.Result?] = []
   lazy var viewModel = RickAndMortyViewModel()
+ 
   
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,11 +41,18 @@ final class RickAndMortyViewController: UIViewController {
       labelTitle.text = "Rick and Morty"
       labelTitle.font = .boldSystemFont(ofSize: 20)
       filterButton.setImage(UIImage(named: "filter"), for: .normal)
+      filterButton.addTarget(self, action:#selector(self.buttonClicked), for: .touchUpInside)
     }
   
    
     indicator.startAnimating()
   }
+  
+  @objc func buttonClicked() {
+   showPopup()
+    print("AÇIL")
+  }
+  
   private func configureView() {
     tableView.delegate = self
     tableView.dataSource = self
@@ -59,7 +68,11 @@ final class RickAndMortyViewController: UIViewController {
     makeButton()
     drawDesign()
    }
-
+  
+  private func showPopup() {
+    let pop = PopupView()
+    view.addSubview(pop)
+  }
 }
 
 extension RickAndMortyViewController: RickandMortyOutput {

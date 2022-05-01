@@ -8,9 +8,12 @@
 import UIKit
 import SnapKit
 
+
 class PopupView: UIView {
   
   lazy var isFilled: Bool = false
+  var rickAndMortyOutput: RickandMortyOutput?
+  let rickAndMortyVC = RickAndMortyViewController()
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -85,9 +88,23 @@ class PopupView: UIView {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
+    configureView()
+    
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  func setDelegate(output: RickandMortyOutput) {
+    rickAndMortyOutput = output
+  }
+  
+  private func configureView() {
     let tap = UITapGestureRecognizer(target: self, action: #selector(PopupView.tapFunction))
-            circleLbl.isUserInteractionEnabled = true
-            circleLbl.addGestureRecognizer(tap)
+    circleLbl.isUserInteractionEnabled = true
+    circleLbl.addGestureRecognizer(tap)
+    self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(popOut)))
     self.backgroundColor = .placeholderText
     self.frame = UIScreen.main.bounds
     self.addSubview(container)
@@ -97,8 +114,6 @@ class PopupView: UIView {
     container.addSubview(lineView)
     container.addSubview(circleLbl)
     container.addSubview(circle2Lbl)
-    
- 
     makeLineView()
     makeContainer()
     makeNameOnelabel()
@@ -106,24 +121,32 @@ class PopupView: UIView {
     makeNameTwolabel()
     makeCircleLbl()
     makeCircle2Lbl()
-    
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
   }
   
   @IBAction func tapFunction(sender: UITapGestureRecognizer) {
-    isFilled = true
-    if isFilled {
+    if isFilled == false {
+      isFilled = true
       DispatchQueue.main.async { [self] in
-        container.addSubview(circleFilledlbl)
-        makeCircleFilled()
+        
+        DispatchQueue.main.async {
+          self.container.addSubview(self.circleFilledlbl)
+          self.makeCircleFilled()
+          
+        }
       }
+    } else {
+      isFilled = false
       
+      DispatchQueue.main.async {
+        self.circleFilledlbl.removeFromSuperview()
+       
+      }
     }
- 
-     }
+  }
+  
+  @objc private func popOut(){
+    self.removeFromSuperview()
+  }
   
   //MARK: Constraints with SnapKit
   private func makeTitlelabel() {

@@ -20,8 +20,7 @@ class RickandMortyTableViewCell: UITableViewCell {
   private let locationLbl: UILabel = UILabel()
   private let customImage: UIImageView = UIImageView()
   
-  
-    override func awakeFromNib() {
+  override func awakeFromNib() {
         super.awakeFromNib()
         
     }
@@ -88,6 +87,7 @@ class RickandMortyTableViewCell: UITableViewCell {
   }
   
   func saveModel(model: SpesificCharacterQuery.Data.Character.Result?) {
+  
     nameLbl.text = "Name: \(model?.name ?? "")"
     locationLbl.text = "Location: \(model?.location?.name ?? "")"
     customImage.af.setImage(withURL: URL(string: model?.image! ?? "https://picsum.photos/200/300") ?? URL(string: "https://picsum.photos/200/300")!)

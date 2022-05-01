@@ -49,10 +49,4 @@ final class RickAndMortyViewModel: IRickandMortyViewModel {
     isLoading = !isLoading
     rickAndMortyOutput?.changeLoading(isLoad: isLoading)
   }
-
-  
-  
-  
-  
-  
 }

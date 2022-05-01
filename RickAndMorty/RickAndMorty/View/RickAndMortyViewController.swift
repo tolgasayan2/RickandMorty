@@ -7,30 +7,31 @@
 
 import UIKit
 import SnapKit
-import SwiftEntryKit
+
 
 protocol RickandMortyOutput {
   func changeLoading(isLoad: Bool)
   func saveData(values: [SpesificCharacterQuery.Data.Character.Result?])
+
 }
 
 final class RickAndMortyViewController: UIViewController {
+  
   private let labelTitle: UILabel = UILabel()
-  private let tableView: UITableView = UITableView()
+  public var tableView: UITableView = UITableView()
   private let indicator: UIActivityIndicatorView = UIActivityIndicatorView()
   private let filterButton: UIButton = UIButton()
   var results: [SpesificCharacterQuery.Data.Character.Result?] = []
+  var filtered: [SpesificCharacterQuery.Data.Character.Result?] = []
   lazy var viewModel = RickAndMortyViewModel()
- 
+  lazy var popUpView = PopupView()
+
   
     override func viewDidLoad() {
         super.viewDidLoad()
     configureView()
       tableView.register(RickandMortyTableViewCell.self, forCellReuseIdentifier: RickandMortyTableViewCell.Identifier.custom.rawValue)
-      DispatchQueue.global().async {
         self.viewModel.fetchItems()
-      }
-   
       viewModel.setDelegate(output: self)
     }
   
@@ -43,14 +44,11 @@ final class RickAndMortyViewController: UIViewController {
       filterButton.setImage(UIImage(named: "filter"), for: .normal)
       filterButton.addTarget(self, action:#selector(self.buttonClicked), for: .touchUpInside)
     }
-  
-   
     indicator.startAnimating()
   }
   
   @objc func buttonClicked() {
    showPopup()
-    print("AÇIL")
   }
   
   private func configureView() {
@@ -70,8 +68,11 @@ final class RickAndMortyViewController: UIViewController {
    }
   
   private func showPopup() {
-    let pop = PopupView()
-    view.addSubview(pop)
+    view.addSubview(popUpView)
+  }
+  
+  private func filterRick( results: [SpesificCharacterQuery.Data.Character.Result?] ) -> [SpesificCharacterQuery.Data.Character.Result?] {
+    return results.filter{ $0!.name!.contains("Rick") }
   }
 }
 
@@ -84,11 +85,9 @@ extension RickAndMortyViewController: RickandMortyOutput {
   }
   
   func saveData(values: [SpesificCharacterQuery.Data.Character.Result?]) {
-    results = values
+    self.results = values
     tableView.reloadData()
   }
-  
-  
 }
 // MARK: TableView Delegate & DataSource && ScrollView Delegate
 extension RickAndMortyViewController: UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
@@ -100,8 +99,10 @@ extension RickAndMortyViewController: UITableViewDelegate, UITableViewDataSource
     guard let cell = tableView.dequeueReusableCell(withIdentifier: RickandMortyTableViewCell.Identifier.custom.rawValue, for: indexPath) as? RickandMortyTableViewCell else {
       return UITableViewCell()
     }
-    cell.saveModel(model: results[indexPath.row])
-    cell.isUserInteractionEnabled = false
+       cell.saveModel(model: self.results[indexPath.row])
+       cell.isUserInteractionEnabled = false
+     
+   
     return cell
   }
   
@@ -112,8 +113,11 @@ extension RickAndMortyViewController: UITableViewDelegate, UITableViewDataSource
         return
       }
       viewModel.rickAndMortyService.fetchAllDatas(pagination: true) { [weak self] result in
-        self?.viewModel.rickAndMortyCharacters.append(contentsOf: result)
-        self?.viewModel.rickAndMortyOutput?.saveData(values: self?.viewModel.rickAndMortyCharacters ?? [])
+        DispatchQueue.main.async {
+          self?.viewModel.rickAndMortyCharacters.append(contentsOf: result)
+          self?.viewModel.rickAndMortyOutput?.saveData(values: self?.viewModel.rickAndMortyCharacters ?? [])
+        }
+        
       }
     }
   }
